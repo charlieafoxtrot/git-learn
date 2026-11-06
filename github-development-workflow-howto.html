@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A visual, beginner-friendly guide to a typical Git and GitHub development workflow.">
+  <title>GitHub Development Workflow — Visual How-To</title>
+  <style>
+    :root { --ink:#172033; --muted:#536076; --canvas:#f6f8fc; --surface:#fff; --line:#d6ddea; --primary:#2458d3; --primary-dark:#183d98; --primary-soft:#eaf0ff; --teal:#007f79; --teal-soft:#e3f8f4; --gold:#925f00; --gold-soft:#fff4d6; --shadow:0 12px 30px rgb(23 32 51 / 8%); --radius:1rem; --width:76rem; --s1:.5rem; --s2:1rem; --s3:1.5rem; --s4:2.5rem; --s5:4.5rem; }
+    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; background:var(--canvas); color:var(--ink); font:1rem/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    a { color:var(--primary-dark); text-underline-offset:.16em; } a:hover { color:var(--primary); } :focus-visible { outline:3px solid #f0a51a; outline-offset:3px; } code,kbd { font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace; } code { overflow-wrap:anywhere; }
+    h1,h2,h3 { line-height:1.15; } h1 { font-size:clamp(2.25rem,7vw,4.75rem); letter-spacing:-.05em; margin:0; max-width:17ch; } h2 { font-size:clamp(1.75rem,4vw,2.75rem); letter-spacing:-.035em; margin:0 0 var(--s2); } h3 { font-size:1.2rem; margin:0 0 var(--s1); } p { max-width:75ch; }
+    .skip-link { background:var(--ink); color:#fff; left:1rem; padding:.65rem 1rem; position:fixed; top:-5rem; z-index:5; } .skip-link:focus { top:1rem; }
+    .site-header { background:linear-gradient(135deg,#142344,#2458d3); color:#fff; } .header-inner,main,.footer-inner { margin:0 auto; max-width:var(--width); padding-inline:var(--s3); } .header-inner { padding-block:var(--s4); }
+    .eyebrow,.section-label { font-size:.8rem; font-weight:750; letter-spacing:.1em; text-transform:uppercase; } .eyebrow { color:#c7d8ff; margin:0 0 var(--s2); } .lede { font-size:clamp(1.08rem,2vw,1.35rem); margin:var(--s3) 0 0; max-width:62ch; }
+    .guide-nav { background:var(--surface); border-bottom:1px solid var(--line); box-shadow:0 3px 10px rgb(23 32 51 / 5%); } .guide-nav ul { display:flex; gap:.25rem; list-style:none; margin:0 auto; max-width:var(--width); overflow-x:auto; padding:.75rem var(--s3); } .guide-nav a { border-radius:.45rem; display:block; font-size:.92rem; font-weight:700; padding:.45rem .7rem; text-decoration:none; white-space:nowrap; } .guide-nav a:hover,.guide-nav a:focus-visible { background:var(--primary-soft); }
+    main { padding-block:var(--s4) var(--s5); } section { scroll-margin-top:1rem; } .guide-section { margin-top:var(--s5); } .section-label { color:var(--primary); margin:0 0 var(--s1); }
+    .panel,.callout,.command-card,.figure-shell,details { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); } .panel,.callout,.command-card { padding:var(--s3); } .grid { display:grid; gap:var(--s2); } .grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); } .big-picture { align-items:stretch; grid-template-columns:minmax(0,1.25fr) minmax(17rem,.75fr); }
+    .workflow-pills { display:grid; gap:.6rem; list-style:none; margin:0; padding:0; } .workflow-pills li { align-items:center; background:var(--primary-soft); border-left:.35rem solid var(--primary); border-radius:.45rem; display:flex; font-weight:700; gap:.65rem; padding:.65rem .8rem; } .step-number { background:var(--primary); border-radius:50%; color:#fff; display:inline-grid; font-size:.82rem; height:1.5rem; place-items:center; width:1.5rem; }
+    .callout { border-left:.4rem solid var(--teal); } .callout.caution { background:var(--gold-soft); border-left-color:var(--gold); } .callout.note { background:var(--teal-soft); } .callout h3 { margin-top:0; } .callout p:last-child,.command-card p:last-child { margin-bottom:0; }
+    .command-card { border-top:.35rem solid var(--primary); overflow:auto; } .command-card pre { background:#10192b; border-radius:.55rem; color:#edf3ff; margin:var(--s2) 0; padding:1rem; white-space:pre-wrap; } .figure-shell { margin:var(--s3) 0; overflow:auto; padding:var(--s2); } figure { margin:0; } figcaption { color:var(--muted); font-size:.92rem; margin:.75rem .25rem .15rem; }
+    .workflow-figure svg,.history-figure svg,.sync-figure svg { display:block; height:auto; max-width:100%; min-width:42rem; } .diagram-lane { fill:#f6f8fc; stroke:#cbd5e6; stroke-width:1.5; } .diagram-node { fill:#fff; stroke:#2458d3; stroke-width:2; } .diagram-node.git { fill:#eaf0ff; } .diagram-node.github { fill:#e3f8f4; stroke:#007f79; } .diagram-node.review { fill:#fff4d6; stroke:#925f00; } .diagram-label { fill:#172033; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:15px; font-weight:700; } .diagram-small { fill:#536076; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:12px; } .diagram-step { fill:#2458d3; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; font-size:12px; font-weight:800; } .diagram-arrow { fill:none; stroke:#2458d3; stroke-linecap:round; stroke-width:2.5; } .diagram-arrow.loop { stroke:#007f79; stroke-dasharray:6 5; } .diagram-arrow.merge { stroke:#925f00; stroke-width:3; } .history-main { fill:none; stroke:#2458d3; stroke-width:4; } .history-topic { fill:none; stroke:#007f79; stroke-width:4; } .history-merge { fill:none; stroke:#925f00; stroke-width:3; } .history-commit { fill:#fff; stroke:#2458d3; stroke-width:3; } .history-commit.topic { stroke:#007f79; } .history-commit.merge { fill:#fff4d6; stroke:#925f00; } .workflow-copy { color:var(--muted); margin:.8rem .25rem 0; max-width:78ch; } .term-card { border-top:.3rem solid var(--teal); } .term-card:nth-child(3n+2) { border-top-color:var(--primary); } .term-card:nth-child(3n) { border-top-color:var(--gold); } .term-card p { margin-bottom:0; } .command-steps { counter-reset:command; display:grid; gap:var(--s2); list-style:none; margin:var(--s3) 0 0; padding:0; } .command-steps > li { counter-increment:command; position:relative; } .command-steps > li::before { align-items:center; background:var(--primary); border-radius:50%; color:#fff; content:counter(command); display:flex; font-weight:800; height:1.8rem; justify-content:center; left:-.55rem; position:absolute; top:-.6rem; width:1.8rem; z-index:1; } .command-card h3 { padding-left:1.5rem; } .where { color:var(--muted); font-size:.9rem; font-weight:700; margin:0; } .sync-grid { align-items:stretch; } .sync-grid .panel { border-top:.3rem solid var(--teal); } .sync-grid .panel + .panel { border-top-color:var(--primary); } .sync-grid .panel + .panel + .panel { border-top-color:var(--gold); }
+    .placeholder { border:2px dashed var(--line); color:var(--muted); padding:var(--s3); } table { border-collapse:collapse; width:100%; } th,td { border-bottom:1px solid var(--line); padding:.75rem; text-align:left; vertical-align:top; } th { background:var(--primary-soft); font-size:.9rem; } details { padding:0 var(--s2); } details + details { margin-top:var(--s2); } summary { cursor:pointer; font-weight:750; padding:1rem .15rem; } details > :not(summary) { margin-left:.15rem; margin-right:.15rem; } .checklist { list-style:"✓  "; padding-left:1.3rem; }
+    footer { background:var(--ink); color:#e7edf9; } .footer-inner { padding-block:var(--s3); } footer a { color:#c7d8ff; }
+    @media (max-width:48rem) { .grid-2,.grid-3,.big-picture { grid-template-columns:1fr; } .header-inner,main,.footer-inner { padding-inline:var(--s2); } .header-inner { padding-block:var(--s3); } .guide-section { margin-top:var(--s4); } .panel,.callout,.command-card { padding:var(--s2); } }
+    @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+    @media print { @page { margin:1.5cm; } body { background:#fff; font-size:10.5pt; } .skip-link,.guide-nav { display:none; } .site-header { background:#fff; color:#000; } .header-inner,main,.footer-inner { max-width:none; padding-inline:0; } .eyebrow { color:#333; } h1 { font-size:28pt; } h2 { font-size:19pt; } .guide-section { break-inside:avoid; margin-top:2rem; } .panel,.callout,.command-card,.figure-shell,details { box-shadow:none; } details { display:block; } details > * { display:block; } a,footer a { color:#000; } a[href^="http"]::after { content:" (" attr(href) ")"; font-size:.8em; overflow-wrap:anywhere; } footer { background:#fff; color:#000; border-top:1px solid #777; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to guide</a>
+  <header class="site-header"><div class="header-inner"><p class="eyebrow">A visual beginner guide</p><h1>How a change travels through Git and GitHub</h1><p class="lede">First, clone a safe practice repository. Then follow one small change from your working folder to a reviewed, merged update.</p></div></header>
+  <nav class="guide-nav" aria-label="Guide sections"><ul>
+    <li><a href="#clone-first">Start: clone</a></li><li><a href="#big-picture">Big picture</a></li><li><a href="#everyday-path">Everyday path</a></li><li><a href="#words">Key words</a></li><li><a href="#tools">Tools</a></li><li><a href="#choose-a-workflow">Choose a workflow</a></li><li><a href="#pull-requests">Pull requests</a></li><li><a href="#actions">Actions</a></li><li><a href="#snags">Common snags</a></li><li><a href="#providerdev-practice">Practice scenario</a></li><li><a href="#quick-reference">Quick reference</a></li>
+  </ul></nav>
+  <main id="main-content" tabindex="-1">
+    <section id="clone-first" aria-labelledby="clone-first-title">
+      <p class="section-label">First tutorial action</p>
+      <h2 id="clone-first-title">Clone the safe practice repository</h2>
+      <div class="grid grid-2">
+        <article class="panel">
+          <h3>GitHub Desktop</h3>
+          <ol>
+            <li>Open <strong>File → Clone Repository</strong>.</li>
+            <li>Choose <strong>URL</strong> and paste <code>https://github.com/charlieafoxtrot/git-learn</code>, or select <code>charlieafoxtrot/git-learn</code> if it appears in the repository list.</li>
+            <li>Set the local path to <code>C:\git</code>, confirm the resulting folder is <code>C:\git\git-learn</code>, then choose <strong>Clone</strong>.</li>
+          </ol>
+          <p>Desktop labels can move slightly between versions; look for the repository URL and local-path fields.</p>
+        </article>
+        <article class="panel">
+          <h3>Git CLI in PowerShell</h3>
+          <p class="where">Runs locally in PowerShell. The first command chooses the parent folder; the second creates the clone.</p>
+          <pre><code>Set-Location C:\git
+git clone https://github.com/charlieafoxtrot/git-learn.git</code></pre>
+          <p>This creates the local working folder <code>C:\git\git-learn</code>. Run the later Git commands from that folder, not from ProviderDev.</p>
+        </article>
+      </div>
+      <aside class="callout note"><h3>What <code>origin</code> means</h3><p>When Git clones this repository, it names that GitHub remote <code>origin</code>. It is a local nickname Git assigned to the source repository, not a special server or a second copy of your files. For example, <code>origin/main</code> is your local record of the remote <code>main</code> branch.</p></aside>
+      <aside class="callout caution"><h3>Public clone does not automatically mean push access</h3><p>Anyone can clone this public repository and read it. If you do not have permission to push to it, use GitHub’s <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks">Fork</a> control first, then clone <em>your fork</em> before attempting to push. In that case, <code>origin</code> points to your fork.</p></aside>
+    </section>
+    <section id="big-picture" aria-labelledby="big-picture-title">
+      <p class="section-label">Start here</p>
+      <h2 id="big-picture-title">The big picture</h2>
+      <div class="grid big-picture">
+        <div class="panel">
+          <h3>Two things working together</h3>
+          <p><strong>Git</strong> records the history of files in a local repository on your computer. <strong>GitHub</strong> hosts a shared copy of that repository and adds collaboration features such as pull requests, reviews, and automated checks.</p>
+          <p>A branch gives one focused change its own path through the local history. A pull request is the conversation and proposed merge on GitHub—not a Git command called “pull.”</p>
+          <details>
+            <summary>Why is a pull request different from <code>git pull</code>?</summary>
+            <p><code>git pull</code> runs on your computer: it downloads changes from a remote repository and integrates them into your currently checked-out local branch. A <strong>pull request</strong> is a GitHub collaboration page: it proposes merging one branch into another, shows the diff, and collects review and check results. You can open a pull request without running <code>git pull</code>, and you can run <code>git pull</code> without opening one.</p>
+          </details>
+          <aside class="callout note" aria-label="Beginner note"><h3>Keep this question handy</h3><p>Where is my change right now: my working folder, my local Git history, or GitHub? The answer tells you the next useful action.</p></aside>
+        </div>
+        <div class="panel"><h3>The usual route</h3><ol class="workflow-pills" aria-label="Typical change sequence"><li><span class="step-number">1</span> Update and branch</li><li><span class="step-number">2</span> Edit and commit locally</li><li><span class="step-number">3</span> Push to GitHub</li><li><span class="step-number">4</span> Discuss, check, and review</li><li><span class="step-number">5</span> Merge and clean up</li></ol></div>
+      </div>
+      <div class="callout caution"><h3>This guide uses examples, not a project policy</h3><p>Repository permissions, protected branches, required checks, and available merge choices vary. ProviderDev examples later in this guide are illustrative unless explicitly identified as documented project facts.</p></div>
+    </section>
+    <section class="guide-section" id="everyday-path" aria-labelledby="everyday-path-title">
+      <p class="section-label">Main route</p>
+      <h2 id="everyday-path-title">The everyday path</h2>
+      <p>Think of a change as moving through places. You edit and record it locally, publish the branch to GitHub, then use a pull request to discuss and integrate it. This is the usual <a href="https://docs.github.com/en/get-started/using-github/github-flow">GitHub flow</a>; repository rules may add steps.</p>
+      <div class="figure-shell workflow-figure">
+        <figure>
+          <svg viewBox="0 0 1080 590" role="img" aria-labelledby="workflow-map-title workflow-map-desc">
+            <title id="workflow-map-title">A change moving from a local working folder through GitHub review to an updated local main branch</title>
+            <desc id="workflow-map-desc">Five horizontal lanes show the working folder, local Git history, GitHub, reviewer, and automation. A change is committed on a topic branch, pushed to GitHub, proposed in a pull request, reviewed and checked, merged into main, then fetched or pulled back to local main.</desc>
+            <defs><marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2458d3"/></marker><marker id="arrow-teal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#007f79"/></marker><marker id="arrow-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#925f00"/></marker></defs>
+            <rect class="diagram-lane" x="12" y="14" width="1056" height="93" rx="12"/><rect class="diagram-lane" x="12" y="122" width="1056" height="93" rx="12"/><rect class="diagram-lane" x="12" y="230" width="1056" height="93" rx="12"/><rect class="diagram-lane" x="12" y="338" width="1056" height="93" rx="12"/><rect class="diagram-lane" x="12" y="446" width="1056" height="122" rx="12"/>
+            <text class="diagram-label" x="34" y="48">Your computer</text><text class="diagram-small" x="34" y="68">working folder</text><text class="diagram-label" x="34" y="156">Git on your computer</text><text class="diagram-small" x="34" y="176">local history &amp; branches</text><text class="diagram-label" x="34" y="264">GitHub</text><text class="diagram-small" x="34" y="284">remote branch &amp; pull request</text><text class="diagram-label" x="34" y="372">People</text><text class="diagram-small" x="34" y="392">author &amp; reviewer</text><text class="diagram-label" x="34" y="480">Automation</text><text class="diagram-small" x="34" y="500">checks report to the pull request</text>
+            <rect class="diagram-node" x="218" y="38" width="150" height="48" rx="9"/><text class="diagram-label" x="249" y="66">edit files</text><text class="diagram-step" x="279" y="30">1</text>
+            <rect class="diagram-node git" x="430" y="146" width="174" height="48" rx="9"/><text class="diagram-label" x="450" y="174">commit on topic branch</text><text class="diagram-step" x="507" y="138">2</text>
+            <rect class="diagram-node github" x="672" y="254" width="133" height="48" rx="9"/><text class="diagram-label" x="700" y="282">push branch</text><text class="diagram-step" x="727" y="246">3</text>
+            <rect class="diagram-node github" x="843" y="254" width="175" height="48" rx="9"/><text class="diagram-label" x="870" y="282">open pull request</text><text class="diagram-step" x="916" y="246">4</text>
+            <rect class="diagram-node review" x="843" y="362" width="175" height="48" rx="9"/><text class="diagram-label" x="877" y="390">review the diff</text><text class="diagram-step" x="916" y="354">5</text>
+            <rect class="diagram-node github" x="843" y="514" width="175" height="34" rx="9"/><text class="diagram-label" x="886" y="537">merge to main</text><text class="diagram-step" x="916" y="506">6</text>
+            <rect class="diagram-node git" x="430" y="514" width="174" height="34" rx="9"/><text class="diagram-label" x="448" y="537">update local main</text><text class="diagram-step" x="507" y="506">7</text>
+            <path class="diagram-arrow" d="M368 62 C395 62 399 170 430 170" marker-end="url(#arrow-blue)"/><path class="diagram-arrow" d="M604 170 C640 170 642 278 672 278" marker-end="url(#arrow-blue)"/><path class="diagram-arrow" d="M805 278 H843" marker-end="url(#arrow-blue)"/><path class="diagram-arrow" d="M930 302 V362" marker-end="url(#arrow-blue)"/><path class="diagram-arrow loop" d="M843 386 C742 386 716 205 604 190" marker-end="url(#arrow-teal)"/><text class="diagram-small" x="651" y="365">comments → revise → commit → push</text><path class="diagram-arrow" d="M930 410 V514" marker-end="url(#arrow-blue)"/><path class="diagram-arrow merge" d="M843 531 H604" marker-end="url(#arrow-gold)"/><text class="diagram-small" x="640" y="505">fetch or pull after merge</text>
+            <rect class="diagram-node review" x="540" y="466" width="176" height="38" rx="9"/><text class="diagram-label" x="569" y="490">run checks on PR</text><path class="diagram-arrow loop" d="M716 485 C775 485 758 313 843 290" marker-end="url(#arrow-teal)"/><text class="diagram-small" x="728" y="453">results</text>
+          </svg>
+          <figcaption>End-to-end workflow map. Solid arrows trace the main path; the dashed loop is the normal review-and-revise cycle. A merge changes shared <code>main</code> on GitHub; then you update your local <code>main</code>.</figcaption>
+        </figure>
+        <p class="workflow-copy"><strong>Text route:</strong> edit in the working folder → commit to a local topic branch → push that branch to GitHub → open a pull request → reviewers and checks respond → merge the pull request into <code>main</code> → update local <code>main</code>. A reviewer does not receive your unpushed local commits.</p>
+      </div>
+      <div class="figure-shell history-figure">
+        <figure>
+          <svg viewBox="0 0 1080 330" role="img" aria-labelledby="history-map-title history-map-desc">
+            <title id="history-map-title">A topic branch diverging from and merging back into main</title>
+            <desc id="history-map-desc">The main line has commits A, B, and a merge commit M. From commit B a topic branch named docs slash add-remediation-guidance has commits C and D. A pull request proposes merging D into main, shown with an arrow toward M.</desc>
+            <defs><marker id="history-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#925f00"/></marker></defs>
+            <text class="diagram-label" x="44" y="95">main</text><text class="diagram-label" x="44" y="235">docs/add-remediation-guidance</text><text class="diagram-small" x="44" y="255">illustrative topic branch</text>
+            <path class="history-main" d="M155 88 H960"/><path class="history-topic" d="M365 88 C420 88 415 225 475 225 H745"/><path class="history-merge" d="M745 225 C805 225 820 88 880 88" marker-end="url(#history-arrow)"/>
+            <circle class="history-commit" cx="235" cy="88" r="18"/><circle class="history-commit" cx="365" cy="88" r="18"/><circle class="history-commit topic" cx="505" cy="225" r="18"/><circle class="history-commit topic" cx="745" cy="225" r="18"/><circle class="history-commit merge" cx="880" cy="88" r="22"/>
+            <text class="diagram-label" x="229" y="94">A</text><text class="diagram-label" x="359" y="94">B</text><text class="diagram-label" x="499" y="231">C</text><text class="diagram-label" x="739" y="231">D</text><text class="diagram-label" x="871" y="94">M</text>
+            <text class="diagram-small" x="196" y="57">earlier commit</text><text class="diagram-small" x="325" y="57">branch point</text><text class="diagram-small" x="450" y="274">edit + commit</text><text class="diagram-small" x="680" y="274">ready to propose</text><text class="diagram-small" x="844" y="57">merged change</text>
+            <rect class="diagram-node github" x="748" y="142" width="175" height="45" rx="9"/><text class="diagram-label" x="775" y="170">GitHub pull request</text><path class="diagram-arrow merge" d="M745 207 C745 183 748 174 748 174" marker-end="url(#history-arrow)"/><path class="diagram-arrow merge" d="M834 142 C858 128 865 110 873 106" marker-end="url(#history-arrow)"/><text class="diagram-small" x="735" y="130">proposes D → main</text>
+          </svg>
+          <figcaption>History map. The topic branch begins at <code>B</code>, collects focused commits <code>C</code> and <code>D</code>, then a GitHub pull request proposes integrating those changes into <code>main</code>. The arrow points into the resulting merged <code>main</code> history.</figcaption>
+        </figure>
+      </div>
+      <aside class="callout note"><h3>GitHub Desktop and the command line show the same local story</h3><p>In GitHub Desktop, select <code>main</code>, fetch/pull updates, create a branch, inspect changes, commit, and publish. The PowerShell sequence below names the same Git actions. Desktop can open or create a PR; use GitHub.com for the full review conversation, inline comments, and merge.</p></aside>
+      <h3>One ordinary, inspect-first PowerShell sequence</h3>
+      <p>Run these commands <strong>in the root folder of your local clone</strong>. Branch and file names below are examples; use only a branch you intend to change. First make sure <code>git status</code> shows no work you need to keep before switching branches.</p>
+      <ol class="command-steps">
+        <li><article class="command-card"><h3>Inspect before changing anything</h3><p class="where">Runs locally in PowerShell, inside the cloned repository.</p><pre><code>git status</code></pre><p>Shows the current branch plus staged, unstaged, and untracked files. It does not change files or history.</p></article></li>
+        <li><article class="command-card"><h3>Move to and update local <code>main</code></h3><p class="where">Runs locally; switch only after you have dealt with work shown by <code>git status</code>.</p><pre><code>git switch main</code></pre><pre><code>git pull --ff-only origin main</code></pre><p><code>git switch main</code> checks out your local <code>main</code>. The <code>pull</code> downloads <code>origin/main</code> and integrates it only if a fast-forward is possible; it stops rather than making an unexpected merge commit.</p></article></li>
+        <li><article class="command-card"><h3>Create one focused branch</h3><p class="where">Runs locally; this branch name is an example.</p><pre><code>git switch -c docs/add-remediation-guidance</code></pre><p>Creates and checks out a local topic branch starting from the updated <code>main</code>.</p></article></li>
+        <li><article class="command-card"><h3>Edit, then inspect the change</h3><p class="where">Edit in your local folder; inspect in PowerShell.</p><pre><code>git status</code></pre><pre><code>git diff</code></pre><p><code>git diff</code> shows unstaged edits compared with the current commit. Read the diff before deciding what belongs in this commit.</p></article></li>
+        <li><article class="command-card"><h3>Stage exactly what you intend, then re-check</h3><p class="where">Runs locally; replace the path with a changed file.</p><pre><code>git add -- path\to\changed-file.md</code></pre><pre><code>git diff --staged</code></pre><p>Staging chooses the snapshot for the next commit. The staged diff is your last local review before recording it.</p></article></li>
+        <li><article class="command-card"><h3>Commit and publish the topic branch</h3><p class="where">Runs locally; publishing sends commits to the named remote when you have access.</p><pre><code>git commit -m "docs: add remediation guidance"</code></pre><pre><code>git push -u origin docs/add-remediation-guidance</code></pre><p>The commit records the staged snapshot in your local history. Push publishes those commits to a remote branch; <code>-u</code> remembers that upstream for later pushes and pulls.</p></article></li>
+      </ol>
+      <p>After the push, use GitHub.com to open a pull request from the topic branch into <code>main</code>, inspect its diff, and follow the repository’s review and checks requirements. See GitHub’s <a href="https://docs.github.com/en/pull-requests/get-started/about-pull-requests">pull-request overview</a> for the collaboration model.</p>
+    </section>
+    <section class="guide-section" id="words" aria-labelledby="words-title">
+      <p class="section-label">Vocabulary</p>
+      <h2 id="words-title">What the words mean</h2>
+      <div class="grid grid-3">
+        <article class="panel term-card"><h3>Working directory</h3><p>The files you can edit right now in your local folder.</p></article>
+        <article class="panel term-card"><h3>Staging area</h3><p>The selected snapshot for the next commit. <code>git add</code> puts changes here.</p></article>
+        <article class="panel term-card"><h3>Commit</h3><p>A named snapshot recorded in local Git history, with a message and parent history.</p></article>
+        <article class="panel term-card"><h3>Local branch</h3><p>A movable label in your local Git repository, such as <code>main</code> or a topic branch.</p></article>
+        <article class="panel term-card"><h3>Remote-tracking branch</h3><p>Your local record of a remote branch, such as <code>origin/main</code>. <code>git fetch</code> updates it; it is not a separate checkout.</p></article>
+        <article class="panel term-card"><h3>Push</h3><p>Publish local commits to a branch on a remote such as GitHub. It does not create a pull request by itself.</p></article>
+        <article class="panel term-card"><h3>Pull request</h3><p>A GitHub collaboration object that proposes merging a head branch into a base branch. It is not the <code>git pull</code> command.</p></article>
+        <article class="panel term-card"><h3>Review and checks</h3><p>People comment or approve; automated checks report whether configured work passed. Both appear around the pull request.</p></article>
+        <article class="panel term-card"><h3>Merge</h3><p>Integrate the proposed branch’s changes into the target branch, commonly <code>main</code>, using the method allowed by that repository.</p></article>
+      </div>
+      <div class="figure-shell sync-figure">
+        <figure>
+          <svg viewBox="0 0 1080 200" role="img" aria-labelledby="sync-title sync-desc">
+            <title id="sync-title">Fetch, pull, and push compared</title>
+            <desc id="sync-desc">Fetch downloads GitHub updates into the remote-tracking branch without changing the checked-out local branch. Pull fetches and integrates an upstream branch into the checked-out local branch. Push sends local commits to a GitHub branch.</desc>
+            <defs><marker id="sync-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2458d3"/></marker></defs>
+            <rect class="diagram-node github" x="45" y="28" width="230" height="55" rx="10"/><text class="diagram-label" x="94" y="52">GitHub branch</text><text class="diagram-small" x="102" y="70">remote: origin/main</text>
+            <rect class="diagram-node git" x="425" y="28" width="230" height="55" rx="10"/><text class="diagram-label" x="461" y="52">remote-tracking</text><text class="diagram-small" x="488" y="70">local: origin/main</text>
+            <rect class="diagram-node git" x="805" y="28" width="230" height="55" rx="10"/><text class="diagram-label" x="855" y="52">local branch</text><text class="diagram-small" x="863" y="70">checked out: main</text>
+            <path class="diagram-arrow" d="M275 55 H425" marker-end="url(#sync-arrow)"/><text class="diagram-label" x="317" y="37">fetch</text><text class="diagram-small" x="296" y="108">downloads remote history</text><text class="diagram-small" x="288" y="125">does not edit your branch</text>
+            <path class="diagram-arrow" d="M655 55 H805" marker-end="url(#sync-arrow)"/><text class="diagram-label" x="697" y="37">integrate</text><text class="diagram-small" x="671" y="108">this second step is part of pull</text>
+            <path class="diagram-arrow" d="M805 158 H275" marker-end="url(#sync-arrow)"/><text class="diagram-label" x="518" y="150">push publishes local commits to GitHub</text>
+          </svg>
+          <figcaption>Sync map. <code>fetch</code> refreshes your knowledge of the remote; <code>pull</code> fetches and then integrates an upstream branch into your current branch; <code>push</code> sends your local commits outward.</figcaption>
+        </figure>
+      </div>
+      <div class="grid grid-3 sync-grid">
+        <article class="panel"><h3><code>git fetch</code></h3><p>Downloads remote updates and updates remote-tracking branches such as <code>origin/main</code>. It does <strong>not</strong> integrate those updates into your checked-out branch. Read the <a href="https://git-scm.com/docs/git-fetch">official Git documentation</a>.</p></article>
+        <article class="panel"><h3><code>git pull</code></h3><p>Fetches, then integrates the configured remote branch into the branch currently checked out. With explicit arguments, <code>git pull origin main</code> names the source. Read the <a href="https://git-scm.com/docs/git-pull">official Git documentation</a>.</p></article>
+        <article class="panel"><h3><code>git push</code></h3><p>Publishes your local commits to a remote branch. After pushing a topic branch, GitHub can offer a pull request, but the pull request remains a separate GitHub step.</p></article>
+      </div>
+      <aside class="callout caution"><h3>One word, two different ideas</h3><p><strong>Pull request</strong> means “please merge this GitHub branch into that one.” <strong><code>git pull</code></strong> is a local Git command that fetches and integrates history. The similar names do not make them the same operation.</p></aside>
+    </section>
+    <section class="guide-section" id="tools" aria-labelledby="tools-title">
+      <p class="section-label">Your toolkit</p>
+      <h2 id="tools-title">GitHub Desktop, Git CLI, and GitHub.com</h2>
+      <aside class="callout note"><h3>My recommendation for you</h3><p>Start with <strong>GitHub Desktop</strong> for local work: its visual changes and history views make it easier to see what Git is tracking. Use <strong>GitHub.com</strong> for pull request discussion and review. Keep <strong>Git CLI</strong> nearby for precise commands and workflows that are clearer in a terminal. Desktop is optional and is not installed on your computer yet.</p></aside>
+      <div class="figure-shell">
+        <figure>
+          <svg viewBox="0 0 1080 260" role="img" aria-labelledby="tools-map-title tools-map-desc">
+            <title id="tools-map-title">Three tools work around one Git repository</title>
+            <desc id="tools-map-desc">GitHub Desktop and Git CLI both work with the same local Git repository. GitHub.com hosts the remote repository and pull request discussions. Changes move between a local repository and GitHub by fetch, pull, and push.</desc>
+            <defs><marker id="tools-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2458d3"/></marker></defs>
+            <rect class="diagram-lane" x="28" y="20" width="310" height="95" rx="14"/><text class="diagram-label" x="56" y="57">GitHub Desktop</text><text class="diagram-small" x="56" y="83">visual local workflow</text>
+            <rect class="diagram-lane" x="28" y="145" width="310" height="95" rx="14"/><text class="diagram-label" x="56" y="182">Git CLI</text><text class="diagram-small" x="56" y="208">explicit Git commands</text>
+            <rect class="diagram-node git" x="430" y="83" width="220" height="95" rx="14"/><text class="diagram-label" x="474" y="122">Local Git repository</text><text class="diagram-small" x="482" y="148">files · branches · history</text>
+            <rect class="diagram-node github" x="746" y="83" width="300" height="95" rx="14"/><text class="diagram-label" x="790" y="122">GitHub.com</text><text class="diagram-small" x="790" y="148">remote repo · pull requests · review</text>
+            <path class="diagram-arrow" d="M338 68C380 68 380 108 430 108" marker-end="url(#tools-arrow)"/><path class="diagram-arrow" d="M338 192C380 192 380 154 430 154" marker-end="url(#tools-arrow)"/><path class="diagram-arrow" d="M650 108H746" marker-end="url(#tools-arrow)"/><path class="diagram-arrow" d="M746 154H650" marker-end="url(#tools-arrow)"/><text class="diagram-small" x="663" y="96">fetch / pull</text><text class="diagram-small" x="673" y="184">push</text>
+          </svg>
+          <figcaption>Desktop and CLI are two ways to use Git locally. GitHub.com is the hosted collaboration space. They show different views of work connected through the same repository history.</figcaption>
+        </figure>
+      </div>
+      <div class="figure-shell">
+        <table>
+          <caption>Which tool for which job?</caption>
+          <thead><tr><th scope="col">Tool</th><th scope="col">What you see</th><th scope="col">Good for</th><th scope="col">What to know</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">GitHub Desktop</th><td>Changed files, line-by-line diffs, branch picker, commit history, sync buttons</td><td>Learning local changes, committing, switching branches, pushing and pulling</td><td>It provides a visual interface to Git. It can open or create a pull request, and lets you inspect a PR branch and checks; use GitHub.com for full review discussion and inline comments.</td></tr>
+            <tr><th scope="row">Git CLI</th><td>Commands and their text output</td><td>Repeatable steps, troubleshooting, automation, and precise workflows</td><td>Commands are explicit, but you need to know which repository and branch are active.</td></tr>
+            <tr><th scope="row">GitHub.com</th><td>Remote files, pull requests, reviews, checks, issues, and settings</td><td>Discussing proposed changes, reviewing diffs, seeing automated results, and merging</td><td>It hosts your repository; it does not automatically update your local copy.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>GitHub describes Desktop as a graphical interface for common Git operations and offers both Desktop and command-line routes in its <a href="https://docs.github.com/en/desktop/overview/about-github-desktop">Desktop overview</a>. See also <a href="https://docs.github.com/en/desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop">cloning and forking in Desktop</a>.</p>
+    </section>
+    <section class="guide-section" id="choose-a-workflow" aria-labelledby="choose-a-workflow-title">
+      <p class="section-label">Make a choice</p>
+      <h2 id="choose-a-workflow-title">Branch, fork, clone, or worktree?</h2>
+      <p>These words describe different things. A clone is a local repository copy; a branch is a line of history inside a repository; a fork is a separate GitHub-hosted copy; a worktree is another local folder attached to one clone.</p>
+      <div class="figure-shell">
+        <figure>
+          <svg viewBox="0 0 1080 380" role="img" aria-labelledby="repo-map-title repo-map-desc">
+            <title id="repo-map-title">How GitHub repositories, forks, clones, branches, and worktrees relate</title>
+            <desc id="repo-map-desc">A GitHub source repository can be forked into another GitHub account. Each GitHub repository can be cloned to a local repository. Inside one local repository, branches point to lines of history; linked worktree folders let different branches be checked out at the same time.</desc>
+            <defs><marker id="repo-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2458d3"/></marker></defs>
+            <rect class="diagram-node github" x="50" y="35" width="280" height="80" rx="12"/><text class="diagram-label" x="89" y="68">GitHub source repo</text><text class="diagram-small" x="104" y="92">charlieafoxtrot/git-learn</text>
+            <rect class="diagram-node github" x="50" y="235" width="280" height="80" rx="12"/><text class="diagram-label" x="103" y="268">Fork on GitHub</text><text class="diagram-small" x="104" y="292">a separate account copy</text>
+            <path class="diagram-arrow" d="M190 115V235" marker-end="url(#repo-arrow)"/><text class="diagram-small" x="205" y="184">fork</text>
+            <rect class="diagram-node git" x="420" y="35" width="280" height="80" rx="12"/><text class="diagram-label" x="461" y="68">Local clone</text><text class="diagram-small" x="468" y="92">one repository on your computer</text>
+            <rect class="diagram-node git" x="420" y="235" width="280" height="80" rx="12"/><text class="diagram-label" x="460" y="268">Remote names</text><text class="diagram-small" x="450" y="292">origin · upstream (optional)</text>
+            <path class="diagram-arrow" d="M330 75H420" marker-end="url(#repo-arrow)"/><text class="diagram-small" x="347" y="60">clone</text><path class="diagram-arrow" d="M330 275H420" marker-end="url(#repo-arrow)"/><text class="diagram-small" x="338" y="258">clone fork</text>
+            <rect class="diagram-node git" x="790" y="35" width="240" height="80" rx="12"/><text class="diagram-label" x="850" y="68">Local branches</text><text class="diagram-small" x="836" y="92">main · topic branch</text>
+            <rect class="diagram-node git" x="790" y="235" width="240" height="80" rx="12"/><text class="diagram-label" x="830" y="268">Worktree folders</text><text class="diagram-small" x="825" y="292">two branches · two folders</text>
+            <path class="diagram-arrow" d="M700 75H790" marker-end="url(#repo-arrow)"/><text class="diagram-small" x="710" y="60">contains</text><path class="diagram-arrow" d="M910 115V235" marker-end="url(#repo-arrow)"/><text class="diagram-small" x="926" y="184">check out separately</text>
+            <text class="diagram-small" x="50" y="356">Remote copies live on GitHub. Clones, branches, and worktrees are local Git concepts.</text>
+          </svg>
+          <figcaption>Relationship map. GitHub hosts repositories and forks. Your clone has local branches and can have linked worktree folders. A fork is not a worktree, and a clone is not a branch.</figcaption>
+        </figure>
+      </div>
+      <div class="figure-shell">
+        <table>
+          <caption>Choose the smallest thing that solves your situation</caption>
+          <thead><tr><th scope="col">If you want to…</th><th scope="col">Use…</th><th scope="col">Why</th></tr></thead>
+          <tbody>
+            <tr><td>Work on one change without affecting <code>main</code></td><th scope="row">A branch</th><td>A separate line of commits inside the same repository.</td></tr>
+            <tr><td>Get a full local copy of a GitHub project</td><th scope="row">A clone</th><td>Files and history live on your computer and can sync with a remote.</td></tr>
+            <tr><td>Propose changes when you cannot push to the original project</td><th scope="row">A fork</th><td>Your own hosted copy can receive your branch and send a pull request upstream.</td></tr>
+            <tr><td>Keep two branches checked out in folders at the same time</td><th scope="row">A worktree</th><td>Additional working folders share one local repository's object history.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid grid-2">
+        <article class="command-card"><h3>Example: add a second worktree</h3><p class="where">Run from <code>C:\git\git-learn</code>; choose a folder name that does not already exist.</p><pre><code>git worktree add -b practice/side-task ..\git-learn-side-task main
+git worktree list</code></pre><p>This creates a new branch from <code>main</code> and checks it out in <code>C:\git\git-learn-side-task</code>. Your original folder stays on its current branch.</p></article>
+        <article class="callout caution"><h3>Before removing a worktree</h3><p>Check for uncommitted changes and preserve anything you need. Remove a clean linked worktree from another worktree with <code>git worktree remove ..\git-learn-side-task</code>. Removing its folder does not automatically delete its branch. GitHub Desktop also documents worktree management; the CLI exposes the same Git worktree feature through explicit commands.</p><p>Official references: <a href="https://git-scm.com/docs/git-worktree">Git worktree</a> and <a href="https://docs.github.com/en/desktop/making-changes-in-a-branch">GitHub Desktop branch and worktree tools</a>.</p></article>
+      </div>
+    </section>
+    <section class="guide-section" id="pull-requests" aria-labelledby="pull-requests-title">
+      <p class="section-label">Collaboration</p><h2 id="pull-requests-title">Pull requests and review</h2>
+      <p>A pull request (PR) proposes changes from a <strong>head</strong> branch into a <strong>base</strong> branch. In the first `git-learn` exercise, the head is `practice/edit-story` and the base is `main`.</p>
+      <div class="figure-shell"><figure>
+        <svg viewBox="0 0 1080 430" role="img" aria-labelledby="pr-map-title pr-map-desc">
+          <title id="pr-map-title">Pull request lifecycle with author, reviewer, and automated checks</title>
+          <desc id="pr-map-desc">The author pushes a topic branch and opens a pull request. The reviewer reads the diff and comments, requests changes, or approves. Automated checks report pass or fail. Feedback loops back to the author for another commit and push. Once reviews and required checks are ready, the pull request merges the head into the base branch.</desc>
+          <defs><marker id="pr-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2458d3"/></marker><marker id="pr-loop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#007f79"/></marker></defs>
+          <rect class="diagram-lane" x="20" y="18" width="1040" height="110" rx="12"/><rect class="diagram-lane" x="20" y="154" width="1040" height="110" rx="12"/><rect class="diagram-lane" x="20" y="290" width="1040" height="110" rx="12"/>
+          <text class="diagram-label" x="40" y="56">Author</text><text class="diagram-small" x="40" y="78">your branch</text><text class="diagram-label" x="40" y="192">Pull request</text><text class="diagram-small" x="40" y="214">GitHub conversation</text><text class="diagram-label" x="40" y="328">Reviewer + checks</text><text class="diagram-small" x="40" y="350">people and automation</text>
+          <rect class="diagram-node git" x="205" y="48" width="160" height="52" rx="9"/><text class="diagram-label" x="232" y="78">commit + push</text><rect class="diagram-node github" x="425" y="48" width="170" height="52" rx="9"/><text class="diagram-label" x="454" y="78">open PR</text>
+          <rect class="diagram-node github" x="665" y="184" width="180" height="52" rx="9"/><text class="diagram-label" x="690" y="214">inspect the diff</text><rect class="diagram-node review" x="205" y="320" width="220" height="52" rx="9"/><text class="diagram-label" x="235" y="350">comment / request / approve</text><rect class="diagram-node review" x="480" y="320" width="190" height="52" rx="9"/><text class="diagram-label" x="505" y="350">checks report status</text><rect class="diagram-node github" x="870" y="48" width="160" height="52" rx="9"/><text class="diagram-label" x="893" y="78">merge to base</text>
+          <path class="diagram-arrow" d="M365 74H425" marker-end="url(#pr-arrow)"/><path class="diagram-arrow" d="M595 74C635 74 626 210 665 210" marker-end="url(#pr-arrow)"/><path class="diagram-arrow" d="M845 210C900 210 919 154 941 100" marker-end="url(#pr-arrow)"/><path class="diagram-arrow loop" d="M665 230C600 280 330 280 305 320" marker-end="url(#pr-loop)"/><path class="diagram-arrow loop" d="M205 345C120 290 130 98 205 76" marker-end="url(#pr-loop)"/><path class="diagram-arrow loop" d="M670 345C810 345 850 260 770 236" marker-end="url(#pr-loop)"/><text class="diagram-small" x="315" y="300">new commit + push</text><text class="diagram-small" x="694" y="288">checks update</text>
+        </svg>
+        <figcaption>PR lifecycle. The head branch can receive commits as you respond to review. When the chosen review requirements and required checks are satisfied, the PR can merge into its base branch.</figcaption>
+      </figure></div>
+      <div class="grid grid-2">
+        <article class="panel"><h3>What reviewers do</h3><ul><li><strong>Comment:</strong> ask a question or suggest an improvement.</li><li><strong>Request changes:</strong> identify work needed before approval.</li><li><strong>Approve:</strong> say the change is ready under that reviewer's judgment.</li></ul><p>For a small practice PR, read the conversation and <strong>Files changed</strong> view. You can inspect your own PR, but GitHub does not let you approve your own pull request.</p></article>
+        <article class="panel"><h3>How the branch gets updated</h3><p>Address feedback on the same topic branch. Each new commit you push updates the open PR automatically. Reviewers can then inspect the new diff and refresh their decision.</p><p>The PR page gathers its description, comments, commits, file diff, checks, and merge readiness in one place.</p></article>
+      </div>
+      <div class="figure-shell"><table>
+        <caption>Common ways GitHub can integrate the pull request</caption><thead><tr><th scope="col">Merge method</th><th scope="col">What happens to history</th><th scope="col">Beginner picture</th></tr></thead>
+        <tbody><tr><th scope="row">Merge commit</th><td>Combines the topic branch history into the base and records a merge commit.</td><td>Keep the branch commits and show where the paths joined.</td></tr><tr><th scope="row">Squash and merge</th><td>Combines the topic branch changes into one new commit on the base.</td><td>Many small practice commits become one tidy commit.</td></tr><tr><th scope="row">Rebase and merge</th><td>Places the topic commits after the base's latest commit, creating a linear history.</td><td>Keep the commits in a straight line.</td></tr></tbody>
+      </table></div>
+      <aside class="callout caution"><h3>Repository rules decide what is allowed</h3><p>Projects can require approvals and checks, restrict who merges, or allow only some merge methods. Follow the status and guidance shown on that repository's PR; do not assume every project uses the same rules.</p></aside>
+      <p>See GitHub Docs on <a href="https://docs.github.com/en/pull-requests/get-started/about-pull-requests">pull requests</a> and <a href="https://docs.github.com/en/pull-requests/concepts/writing-code-for-a-project">writing code for a project</a>.</p>
+    </section>
+    <section class="guide-section" id="actions" aria-labelledby="actions-title">
+      <p class="section-label">Automation</p><h2 id="actions-title">GitHub Actions in context</h2>
+      <p>GitHub Actions runs automated work from a workflow file in the repository. A workflow can start when someone pushes a branch, opens or updates a pull request, or manually starts it.</p>
+      <div class="figure-shell"><figure><svg viewBox="0 0 1000 230" role="img" aria-labelledby="actions-map-title actions-map-desc">
+        <title id="actions-map-title">A pull request can trigger GitHub Actions checks</title><desc id="actions-map-desc">A push or pull request event starts a workflow, which runs jobs made of steps. The result appears as a status on the pull request for people to consider before merge.</desc>
+        <defs><marker id="actions-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2458d3"/></marker></defs>
+        <rect class="diagram-node git" x="24" y="78" width="180" height="74" rx="12"/><text class="diagram-label" x="52" y="108">Push / PR</text><text class="diagram-small" x="47" y="132">event starts work</text>
+        <rect class="diagram-node github" x="270" y="78" width="190" height="74" rx="12"/><text class="diagram-label" x="301" y="108">Workflow</text><text class="diagram-small" x="294" y="132">instructions in YAML</text>
+        <rect class="diagram-node review" x="526" y="78" width="190" height="74" rx="12"/><text class="diagram-label" x="557" y="108">Jobs + steps</text><text class="diagram-small" x="548" y="132">build / lint / test</text>
+        <rect class="diagram-node github" x="782" y="78" width="190" height="74" rx="12"/><text class="diagram-label" x="809" y="108">PR check status</text><text class="diagram-small" x="817" y="132">pass / fail / pending</text>
+        <path class="diagram-arrow" d="M204 115H270" marker-end="url(#actions-arrow)"/><path class="diagram-arrow" d="M460 115H526" marker-end="url(#actions-arrow)"/><path class="diagram-arrow" d="M716 115H782" marker-end="url(#actions-arrow)"/>
+      </svg><figcaption>Actions check the change according to instructions the project has configured. A green check is evidence that those jobs passed; it is not a substitute for a human review.</figcaption></figure></div>
+      <div class="grid grid-2"><article class="panel"><h3>Remember</h3><ul><li>Not every repository has automated workflows.</li><li>Checks run from project-defined workflow files and may need setup or secrets.</li><li>A failed check links to logs that help identify the step that failed.</li><li>Only checks marked as required by repository rules block merging.</li></ul></article><article class="callout"><h3>Practice repo status</h3><p>The <code>git-learn</code> lessons explain the idea without asking you to configure automation. No existing Actions setup is being claimed for ProviderDev. A future hypothetical project might check formatting or validate a Terraform plan on a pull request.</p></article></div>
+      <p>Official guide: <a href="https://docs.github.com/en/actions/about-github-actions/understanding-github-actions">Understanding GitHub Actions</a>.</p>
+    </section>
+    <section class="guide-section" id="snags" aria-labelledby="snags-title"><p class="section-label">Recover calmly</p><h2 id="snags-title">Common snags</h2>
+      <p>When something looks wrong, pause and inspect before changing history. Start with <code>git status</code>; it tells you the current branch and whether there are edits to protect.</p>
+      <div class="figure-shell"><table><caption>Safe first moves for common situations</caption><thead><tr><th scope="col">Situation</th><th scope="col">Inspect</th><th scope="col">Next safe move</th></tr></thead><tbody>
+        <tr><th scope="row">Your branch is behind</th><td><code>git status</code></td><td>Keep your work safe, switch to <code>main</code>, then use <code>git pull --ff-only origin main</code>. Return to your topic branch and follow project guidance to update it.</td></tr>
+        <tr><th scope="row">Review asks for a change</th><td>Read the comment and PR diff</td><td>Edit on the same topic branch, inspect the diff, commit, and push. The PR updates automatically.</td></tr>
+        <tr><th scope="row">A merge conflict appears</th><td><code>git status</code> and the marked files</td><td>Choose the intended combined content, remove conflict markers, review the whole file, then stage and complete the merge. Ask for help if the intended result is unclear.</td></tr>
+        <tr><th scope="row">You may be on the wrong branch</th><td><code>git branch --show-current</code> and <code>git status</code></td><td>Do not switch blindly if there are edits. Preserve or commit the work first; then move to the right branch.</td></tr>
+        <tr><th scope="row">Push is rejected</th><td><code>git status</code> and the full error</td><td>Fetch or pull the latest base as appropriate, resolve any conflict, then push again. Do not force-push a shared branch unless the project explicitly instructs you.</td></tr>
+      </tbody></table></div>
+      <aside class="callout caution"><h3>A safe pause</h3><p>Avoid <code>git reset --hard</code> and force-push while learning; they can discard work or rewrite commits other people rely on. Ask someone to inspect with you before using them.</p></aside>
+    </section>
+    <section class="guide-section" id="providerdev-practice" aria-labelledby="providerdev-practice-title"><p class="section-label">Illustrative exercise</p><h2 id="providerdev-practice-title">ProviderDev practice scenario</h2>
+      <p>This is a hypothetical example to connect Git terms to your project. It does not assert that ProviderDev has a GitHub remote, branch rules, CI, or this past workflow.</p>
+      <div class="figure-shell"><figure><svg viewBox="0 0 960 240" role="img" aria-labelledby="provider-map-title provider-map-desc"><title id="provider-map-title">Hypothetical ProviderDev documentation change</title><desc id="provider-map-desc">A developer creates a topic branch to improve documentation about an Intune remediation resource, reviews the diff, opens a pull request, receives review and optional automated checks, then merges after project requirements are met.</desc>
+        <defs><marker id="provider-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2458d3"/></marker></defs>
+        <rect class="diagram-node git" x="20" y="76" width="180" height="78" rx="12"/><text class="diagram-label" x="48" y="108">Topic branch</text><text class="diagram-small" x="42" y="132">docs/remediation</text>
+        <rect class="diagram-node git" x="258" y="76" width="180" height="78" rx="12"/><text class="diagram-label" x="289" y="108">Edit + commit</text><text class="diagram-small" x="292" y="132">one clear change</text>
+        <rect class="diagram-node github" x="496" y="76" width="180" height="78" rx="12"/><text class="diagram-label" x="544" y="108">Pull request</text><text class="diagram-small" x="522" y="132">review the diff</text>
+        <rect class="diagram-node review" x="734" y="76" width="200" height="78" rx="12"/><text class="diagram-label" x="759" y="108">Review + checks</text><text class="diagram-small" x="759" y="132">if configured</text>
+        <path class="diagram-arrow" d="M200 115H258" marker-end="url(#provider-arrow)"/><path class="diagram-arrow" d="M438 115H496" marker-end="url(#provider-arrow)"/><path class="diagram-arrow" d="M676 115H734" marker-end="url(#provider-arrow)"/>
+      </svg><figcaption>One realistic shape of work: improve a short explanation of an Intune remediation resource, then propose and review that focused change.</figcaption></figure></div>
+      <p>The same pattern applies to a code or infrastructure change. Keep each PR focused, read the diff before asking for review, and follow the real project's guidance for secrets, validation, approvals, and deployment.</p>
+    </section>
+    <section class="guide-section" id="quick-reference" aria-labelledby="quick-reference-title"><p class="section-label">Keep nearby</p><h2 id="quick-reference-title">Quick reference and further reading</h2>
+      <div class="figure-shell"><table><caption>Starter command cards — run in the repository folder</caption><thead><tr><th scope="col">Command</th><th scope="col">What it helps you do</th></tr></thead><tbody>
+        <tr><th scope="row"><code>git clone URL</code></th><td>Make a local copy of a remote repository.</td></tr><tr><th scope="row"><code>git status</code></th><td>See the branch, edits, and staging state.</td></tr><tr><th scope="row"><code>git switch -c feature/name</code></th><td>Create and move to a new topic branch.</td></tr><tr><th scope="row"><code>git fetch origin</code></th><td>Download remote updates without changing your current files.</td></tr><tr><th scope="row"><code>git pull --ff-only origin main</code></th><td>Update the current branch from origin/main when it can move forward cleanly.</td></tr><tr><th scope="row"><code>git diff</code></th><td>Review edits not yet staged.</td></tr><tr><th scope="row"><code>git add FILE</code></th><td>Select a file's current changes for the next commit.</td></tr><tr><th scope="row"><code>git diff --staged</code></th><td>Review what is selected for the next commit.</td></tr><tr><th scope="row"><code>git commit -m "message"</code></th><td>Save the selected snapshot locally.</td></tr><tr><th scope="row"><code>git push -u origin branch</code></th><td>Publish your branch and set its upstream tracking link.</td></tr><tr><th scope="row"><code>git worktree list</code></th><td>List working folders linked to this repository.</td></tr><tr><th scope="row"><code>git worktree add PATH BRANCH</code></th><td>Open another branch in a separate working folder.</td></tr>
+      </tbody></table></div>
+      <div class="grid grid-2"><article class="panel"><h3>Words to remember</h3><dl><dt>origin</dt><dd>The usual short name for the remote you cloned from (often your fork if you cloned your fork).</dd><dt>upstream</dt><dd>Often the original project remote when working from a fork; context matters.</dd><dt>fetch</dt><dd>Download remote history and branch updates without integrating them.</dd><dt>pull</dt><dd>Fetch updates and integrate them into the current branch.</dd><dt>base / head</dt><dd>The destination branch and the proposed source branch of a PR.</dd><dt>worktree</dt><dd>A linked working folder for another branch of the same local repository.</dd></dl></article><article class="panel"><h3>Official reading</h3><ul><li><a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">Clone a repository</a></li><li><a href="https://docs.github.com/en/get-started/using-github/github-flow">GitHub Flow</a></li><li><a href="https://docs.github.com/en/desktop/overview/about-github-desktop">About GitHub Desktop</a></li><li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-forks">About forks</a></li><li><a href="https://git-scm.com/docs/git-fetch">Git fetch</a> · <a href="https://git-scm.com/docs/git-pull">Git pull</a> · <a href="https://git-scm.com/docs/git-worktree">Git worktree</a></li><li><a href="https://docs.github.com/en/actions/about-github-actions/understanding-github-actions">GitHub Actions</a></li></ul></article></div>
+      <h3>Practice in the training repository</h3><ol><li><a href="https://github.com/charlieafoxtrot/git-learn/blob/main/exercises/01-first-change.md">Make your first change and PR</a></li><li><a href="https://github.com/charlieafoxtrot/git-learn/blob/main/exercises/02-branches-and-history.md">Branches and history</a></li><li><a href="https://github.com/charlieafoxtrot/git-learn/blob/main/exercises/03-review-and-conflict.md">Review feedback and conflicts</a></li><li><a href="https://github.com/charlieafoxtrot/git-learn/blob/main/exercises/04-forks.md">Forks and remotes</a></li><li><a href="https://github.com/charlieafoxtrot/git-learn/blob/main/exercises/05-worktrees.md">Worktrees</a></li><li><a href="https://github.com/charlieafoxtrot/git-learn/blob/main/exercises/06-actions.md">Actions</a></li></ol>
+    </section>
+  </main>
+  <footer><div class="footer-inner"><p><strong>GitHub Development Workflow — Visual How-To</strong></p><p>Designed to work offline in a browser. External links are included as optional deeper reading; GitHub labels can change over time.</p></div></footer>
+</body>
+</html>

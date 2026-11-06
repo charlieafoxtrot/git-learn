@@ -4,9 +4,10 @@ A small, safe practice repository for learning Git and GitHub by doing.
 
 ## Start here
 
-1. Clone this repository with GitHub Desktop or Git CLI.
-2. Open `exercises/01-first-change.md` and follow one change from branch to pull request.
-3. Return here for the optional lessons on history, conflicts, forks, worktrees, and Actions.
+1. [Open the visual Git and GitHub workflow guide](github-development-workflow-howto.html) for the diagrams and the end-to-end explanation.
+2. Clone this repository with GitHub Desktop or Git CLI.
+3. Open `exercises/01-first-change.md` and follow one change from branch to pull request.
+4. Return here for the optional lessons on history, conflicts, forks, worktrees, and Actions.
 
 This repository is a sandbox. Its text files are examples; they are not connected to ProviderDev or any production project.
 
