@@ -4,10 +4,12 @@ A small, safe practice repository for learning Git and GitHub by doing.
 
 ## Start here
 
-1. [Open the visual Git and GitHub workflow guide](github-development-workflow-howto.html) for the diagrams and the end-to-end explanation.
-2. Clone this repository with GitHub Desktop or Git CLI.
+1. Clone this repository with GitHub Desktop or Git CLI.
+2. Double-click `Start-GuidePreview.cmd`. It opens the guide at `http://localhost:52678/` and leaves the server running in the background.
 3. Open `exercises/01-first-change.md` and follow one change from branch to pull request.
 4. Return here for the optional lessons on history, conflicts, forks, worktrees, and Actions.
+
+You can also open [the HTML guide directly](github-development-workflow-howto.html), but that opens it as a local file (`file://`). The launcher serves the same guide as a local website. Double-click `Stop-GuidePreview.cmd` when you want to stop the server. The preview listens only on your own computer; it is not published to the internet.
 
 This repository is a sandbox. Its text files are examples; they are not connected to ProviderDev or any production project.
 
